@@ -1,2 +1,21 @@
+# Rust build artifacts and incremental compilation
+/target/
+**/*.rs.bk
+
+# IDE, editor, and environment files
 .vscode/
+.idea/
+
+# Local task storage
 tasks.json
+
+# macOS cache, logs, and system files
+.DS_Store
+
+# Cargo logs and lockfile (if you don't want to track Cargo.lock in a library)
+#Cargo.lock
+
+# Test output, coverage, and debug info 
+**/*.profraw
+**/*.test
+**/*.dSYM
