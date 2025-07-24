@@ -36,6 +36,7 @@ fn load_tasks() -> Result<Vec<Task>> {
         .read(true)
         .write(true)
         .create(true)
+        .truncate(false) // explicitly preserve existing contents
         .open(STORAGE)
         .context("opening tasks storage")?;
     let reader = BufReader::new(file);
@@ -64,7 +65,7 @@ pub fn run(cmd: TaskCmd) -> Result<()> {
                 done: false,
             });
             save_tasks(&tasks).context("saving tasks after Add")?;
-            println!("Added task {}", id);
+            println!("Added task {id}");
         }
         TaskCmd::List => {
             for t in &tasks {
@@ -73,7 +74,7 @@ pub fn run(cmd: TaskCmd) -> Result<()> {
                     t.id,
                     if t.done { "x" } else { " " },
                     t.description,
-                    t.created_at
+                    t.created_at,
                 );
             }
         }
@@ -81,9 +82,9 @@ pub fn run(cmd: TaskCmd) -> Result<()> {
             if let Some(t) = tasks.iter_mut().find(|t| t.id == id) {
                 t.done = true;
                 save_tasks(&tasks).context("saving tasks after Done")?;
-                println!("Marked task {} done", id);
+                println!("Marked task {id} done");
             } else {
-                println!("Task {} not found", id);
+                println!("Task {id} not found");
             }
         }
         TaskCmd::Delete { id } => {
@@ -92,7 +93,7 @@ pub fn run(cmd: TaskCmd) -> Result<()> {
                 t.id = i + 1;
             }
             save_tasks(&tasks).context("saving tasks after Delete")?;
-            println!("Deleted task {}", id);
+            println!("Deleted task {id}");
         }
     }
     Ok(())
