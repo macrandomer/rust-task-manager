@@ -1,13 +1,9 @@
 name: CI
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
-  build-and-test:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -15,7 +11,10 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
-      - name: Build
-        run: cargo build --verbose
-      - name: Test
+          override: true
+      - name: Format Check
+        run: cargo fmt -- --check
+      - name: Lint
+        run: cargo clippy -- -D warnings
+      - name: Build & Test
         run: cargo test --verbose

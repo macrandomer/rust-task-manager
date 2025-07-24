@@ -2,13 +2,20 @@
 name = "rust-task-manager"
 version = "0.1.0"
 edition = "2021"
+authors = ["Mohammed Abdul Aziz <mohdabdul532@gmail.com>"]
+description = "A command-line task manager in Rust"
+repository = "https://github.com/macrandomer/rust-task-manager"
+license = "MIT"
+keywords = ["cli", "todo", "task", "manager"]
 
 [dependencies]
-serde       = { version = "1.0", features = ["derive"] }
-serde_json  = "1.0"
-chrono      = "0.4"
-clap        = { version = "4.0", features = ["derive"] }
-anyhow      = "1.0"
+anyhow = "1.0"
+chrono = "0.4"
+clap = { version = "4.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
 
 [dev-dependencies]
-assert_cmd  = "2.0"
+assert_cmd = "2.0"
+assert_fs = "1.0"
+predicates = "3.1"

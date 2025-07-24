@@ -6,7 +6,7 @@ use rust_task_manager::commands::{run, TaskCmd};
     name = "task",
     version = "0.1.0",
     author = "Mohammed Abdul Aziz <mohdabdul532@gmail.com>",
-    about = "Manage your tasks",
+    about = "A command-line task manager in Rust",
     long_about = None
 )]
 struct Cli {

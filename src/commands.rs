@@ -1,20 +1,27 @@
-use std::fs::{File, OpenOptions};
-use std::io::{BufReader, BufWriter};
-use serde::{Deserialize, Serialize};
+use anyhow::{Context, Result};
 use chrono::Utc;
 use clap::Subcommand;
-use anyhow::{Result, Context};
+use serde::{Deserialize, Serialize};
+use std::fs::{File, OpenOptions};
+use std::io::{BufReader, BufWriter};
 
+/// JSON file where tasks are stored.
 const STORAGE: &str = "tasks.json";
 
+/// Supported CLI commands.
 #[derive(Subcommand)]
 pub enum TaskCmd {
+    /// Add a new task
     Add { description: String },
+    /// List all tasks
     List,
+    /// Mark a task as done
     Done { id: usize },
+    /// Delete a task
     Delete { id: usize },
 }
 
+/// Task structure serialized to/from JSON.
 #[derive(Serialize, Deserialize)]
 struct Task {
     id: usize,
@@ -23,6 +30,7 @@ struct Task {
     done: bool,
 }
 
+/// Loads all tasks from storage, or returns an empty list if file does not exist.
 fn load_tasks() -> Result<Vec<Task>> {
     let file = OpenOptions::new()
         .read(true)
@@ -35,15 +43,15 @@ fn load_tasks() -> Result<Vec<Task>> {
     Ok(tasks)
 }
 
+/// Saves all tasks to storage.
 fn save_tasks(tasks: &[Task]) -> Result<()> {
-    let file = File::create(STORAGE)
-        .context("creating tasks storage")?;
+    let file = File::create(STORAGE).context("creating tasks storage")?;
     let writer = BufWriter::new(file);
-    serde_json::to_writer_pretty(writer, tasks)
-        .context("saving tasks")?;
+    serde_json::to_writer_pretty(writer, tasks).context("saving tasks")?;
     Ok(())
 }
 
+/// Executes the requested task command and persists changes.
 pub fn run(cmd: TaskCmd) -> Result<()> {
     let mut tasks = load_tasks().context("loading tasks from storage")?;
     match cmd {
