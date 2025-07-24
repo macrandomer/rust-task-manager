@@ -1,5 +1,5 @@
 use clap::Parser;
-use rust_task_manager::commands::{run, TaskCmd};
+use rust_task_manager::commands::{TaskCmd, run};
 
 #[derive(Parser)]
 #[command(
