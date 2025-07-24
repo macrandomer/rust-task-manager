@@ -26,6 +26,7 @@ struct Task {
 fn load_tasks() -> Result<Vec<Task>> {
     let file = OpenOptions::new()
         .read(true)
+        .write(true)
         .create(true)
         .open(STORAGE)
         .context("opening tasks storage")?;
@@ -35,14 +36,16 @@ fn load_tasks() -> Result<Vec<Task>> {
 }
 
 fn save_tasks(tasks: &[Task]) -> Result<()> {
-    let file = File::create(STORAGE).context("creating tasks storage")?;
+    let file = File::create(STORAGE)
+        .context("creating tasks storage")?;
     let writer = BufWriter::new(file);
-    serde_json::to_writer_pretty(writer, tasks).context("saving tasks")?;
+    serde_json::to_writer_pretty(writer, tasks)
+        .context("saving tasks")?;
     Ok(())
 }
 
 pub fn run(cmd: TaskCmd) -> Result<()> {
-    let mut tasks = load_tasks()?;
+    let mut tasks = load_tasks().context("loading tasks from storage")?;
     match cmd {
         TaskCmd::Add { description } => {
             let id = tasks.len() + 1;
@@ -52,7 +55,7 @@ pub fn run(cmd: TaskCmd) -> Result<()> {
                 created_at: Utc::now().to_rfc3339(),
                 done: false,
             });
-            save_tasks(&tasks)?;
+            save_tasks(&tasks).context("saving tasks after Add")?;
             println!("Added task {}", id);
         }
         TaskCmd::List => {
@@ -69,7 +72,7 @@ pub fn run(cmd: TaskCmd) -> Result<()> {
         TaskCmd::Done { id } => {
             if let Some(t) = tasks.iter_mut().find(|t| t.id == id) {
                 t.done = true;
-                save_tasks(&tasks)?;
+                save_tasks(&tasks).context("saving tasks after Done")?;
                 println!("Marked task {} done", id);
             } else {
                 println!("Task {} not found", id);
@@ -80,7 +83,7 @@ pub fn run(cmd: TaskCmd) -> Result<()> {
             for (i, t) in tasks.iter_mut().enumerate() {
                 t.id = i + 1;
             }
-            save_tasks(&tasks)?;
+            save_tasks(&tasks).context("saving tasks after Delete")?;
             println!("Deleted task {}", id);
         }
     }

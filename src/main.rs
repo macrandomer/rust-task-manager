@@ -1,9 +1,14 @@
-use clap::{Parser, Subcommand};
+use clap::Parser;
 use rust_task_manager::commands::{run, TaskCmd};
 
 #[derive(Parser)]
-#[command(name="task")]
-#[command(about="Manage your tasks", long_about = None)]
+#[command(
+    name = "task",
+    version = "0.1.0",
+    author = "Mohammed Abdul Aziz <mohdabdul532@gmail.com>",
+    about = "Manage your tasks",
+    long_about = None
+)]
 struct Cli {
     #[command(subcommand)]
     command: TaskCmd,
